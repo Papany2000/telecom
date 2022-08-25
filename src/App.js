@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { Navigation } from "./Component/Navigation";
+import OrganizationPage from "./Component/OrganizationPage";
+import {Routes, Route} from 'react-router-dom'
+import Contract from "./Component/Contract";
+import Order from './Component/Order'
+
 
 function App() {
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <>
+    <Navigation/>
+    <div className="container mx-auto  pt-5">
+      <Routes>
+       <Route path = '/' element = {<OrganizationPage/>} />
+       <Route path = '/contract' element = {<Contract/>} />
+       <Route path = '/orders' element = {<Order/>} />
+        </Routes>
+      
     </div>
+    </>
   );
 }
 
