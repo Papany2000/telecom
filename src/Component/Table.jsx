@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
-import { useTable, useGlobalFilter, useAsyncDebounce, usePagination } from 'react-table'  
-
+import React, { useState } from 'react'
+import { useTable, useGlobalFilter, useAsyncDebounce, useSortBy, usePagination, useFilters } from 'react-table'
+import { DefaultColumnFilter } from './DefaultColumnFilter'
 function GlobalFilter({
   preGlobalFilteredRows,
   globalFilter,
@@ -13,9 +13,9 @@ function GlobalFilter({
   }, 200)
 
   return (
-    <span style = {{margin: '130px'}}>
+    <span>
       Search:{' '}
-      <input 
+      <input
         value={value || ""}
         onChange={e => {
           setValue(e.target.value);
@@ -26,8 +26,28 @@ function GlobalFilter({
     </span>
   )
 }
-
-function Table({columns, data}) {
+function Table({ columns, data, }) {
+  const filterTypes = React.useMemo(
+    () => ({
+      text: (rows, id, filterValue) => {
+        return rows.filter(row => {
+          const rowValue = row.values[id]
+          return rowValue !== undefined
+            ? String(rowValue)
+              .toLowerCase()
+              .startsWith(String(filterValue).toLowerCase())
+            : true
+        })
+      },
+    }),
+    []
+  );
+  const defaultColumn = React.useMemo(
+    () => ({
+      Filter: DefaultColumnFilter,
+    }),
+    []
+  );
   const {
     getTableProps,
     getTableBodyProps,
@@ -42,97 +62,119 @@ function Table({columns, data}) {
     nextPage,
     previousPage,
     setPageSize,
-    state, 
-    preGlobalFilteredRows, 
+    state,
+    preGlobalFilteredRows,
     setGlobalFilter,
-     
   } = useTable({
-      columns,
-       data
-      },
-      useGlobalFilter,
-      usePagination, 
-      )
-       
-
-      return(
-        <>
-        <h1 className='text-center italic font-bold my-5'>Список организаций партнёров Телеком СП</h1>
-          <GlobalFilter 
-        preGlobalFilteredRows={preGlobalFilteredRows}
-        globalFilter={state.globalFilter}
-        setGlobalFilter={setGlobalFilter}
-      />
-        <table className='mx-auto mt-3' {...getTableProps()}>
-        <thead>
-          {
-          headerGroups.map(headerGroup => (
-            <tr className='border' {...headerGroup.getHeaderGroupProps()}>
-              {
-              headerGroup.headers.map(column => (
-                <th className='border' {...column.getHeaderProps()}>
-                  {
-                  column.render('Header')}
-                 
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody  {...getTableBodyProps()}>
-          {
-          page.map((row, i) => {
-            prepareRow(row)
-            return (
-              <tr className='border' {...row.getRowProps()}>
+    columns,
+    data,
+    defaultColumn,
+    filterTypes
+  },
+    useFilters,
+    useGlobalFilter,
+    useSortBy,
+    usePagination,
+  )
+  return (
+    <>
+      <div className="mt-2 flex flex-col">
+        <div className="my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"></div>
+            <GlobalFilter
+              preGlobalFilteredRows={preGlobalFilteredRows}
+              globalFilter={state.globalFilter}
+              setGlobalFilter={setGlobalFilter}
+            />
+            <table className="w-100% divide-y divide-gray-200 " {...getTableProps()}>
+              <thead className="bg-gray-50 border-spacing-1">
                 {
-                row.cells.map(cell => {
-                  return (
-                    <td className='border px-2 py-2' {...cell.getCellProps()}>
+                  headerGroups.map(headerGroup => (
+                    <tr className='border-spacing-1' {...headerGroup.getHeaderGroupProps()}>
                       {
-                      cell.render('Cell')}
-                    </td>
-                  )
-                })}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      <div style = {{marginLeft: '130px', marginTop: '15px'}}>
-        <button className='border' onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button className='border' onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button className='border' onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
-        </button>{' '}
-        <button className='border' onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-        <span>
-          Page{' '}
-          <strong>
-            {state.pageIndex + 1} of {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <select className='border'
-          value={state.pageSize}
-          onChange={e => {
-              setPageSize(Number(e.target.value))
-          }}
-        >
-          {[5, 10, 20].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
+                        headerGroup.headers.map(column => (
+                          <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" {...column.getHeaderProps({ ...column.getSortByToggleProps(), style: { width: column.width, minwidth: column.minwidth, whiteSpace: column.whiteSpace } })}>
+                            {
+                              column.render('Header')}
+                            <div>
+                              {column.canFilter ? column.render("Filter") : null}
+                            </div>
+                            <span>
+                              {column.isSorted ? (column.isSortedDesc ? '🔽' : '🔼') : ''}
+                            </span>
+                          </th>
+                        ))}
+                    </tr>
+                  ))}
+              </thead>
+              <tbody  {...getTableBodyProps()} className="">
+                {
+                  page.map((row, i) => {
+                    prepareRow(row)
+                    return (
+                      <tr className='border hover:bg-white' {...row.getRowProps()}>
+                        {
+                          row.cells.map(cell => {
+                            return (
+                              <td {...cell.getCellProps({
+                                style: {
+                                  width: cell.column.width,
+                                  whiteSpace: cell.column.whiteSpace,
+                                  minwidth: cell.column.minwidth,
+                                }
+                              })} className="px-6 py-4 whitespace-nowrap">
+                                {
+                                  cell.render('Cell')}
+
+                              </td>
+                            )
+                          })}
+                      </tr>
+                    )
+                  })}
+              </tbody>
+            </table>
+
+            <div style={{ marginLeft: '120px', marginTop: '15px' }}>
+              <button className='border-2' onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                {'<<'}
+              </button>{' '}
+              <button className='border' onClick={() => previousPage()} disabled={!canPreviousPage}>
+                {'<'}
+              </button>{' '}
+              <button className='border' onClick={() => nextPage()} disabled={!canNextPage}>
+                {'>'}
+              </button>{' '}
+              <button className='border' onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                {'>>'}
+              </button>{' '}
+              <span className='border'>
+                Page{' '}
+                <strong >
+                  {state.pageIndex + 1} of {pageOptions.length}
+                </strong>{' '}
+              </span>
+              <select className='border'
+                value={state.pageSize}
+                onChange={e => {
+                  setPageSize(Number(e.target.value))
+                }}
+              >
+                {[5, 10, 20].map(pageSize => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
-       </>
-      )
+
+
+    </>
+  )
 }
 
 export default Table

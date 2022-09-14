@@ -1,367 +1,178 @@
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Table from './Table'
-
+import AddOrganizationForm from './AddOrganizationForm'
+import { Link } from 'react-router-dom'
+import { FcEmptyTrash } from "react-icons/fc";
+import { GrDocumentDownload } from "react-icons/gr";
+import { useParams } from 'react-router-dom'
+import { getOrganizations, postOrganization, removeOrganization } from '../api/Organization'
 
 function OrganizationPage() {
+  const routeParams = useParams();
+  const [organizations, setOrganizations] = useState([]);
+  useEffect(() => {
+    getOrganizations(routeParams.id)
+      .then(
+        (result) => {
+          setOrganizations(result.data);
+        }
+      )
+  }, [routeParams.id])
+
   const columns = useMemo(
     () => [
-     
-      {Header: 'Организации',
-      columns: [
-        {Header: 'id',
-        accessor: 'id'
+
+      {
+        Header: 'Организации',
+      
+        columns: [
+          {
+            Header: 'Организация',
+            accessor: 'name',
+          },
+          {
+            Header: 'Телефон',
+            accessor: 'phone'
+          },
+          {
+            Header: 'Почта',
+            accessor: 'email'
+          },
+        ]
       },
-        {Header: 'Организация',
-        accessor: 'name'
+
+      {
+        Header: 'Менеджер',
+        columns: [
+          {
+            Header: 'Имя Фамилия ',
+            accessor: 'manager',
+          },
+          {
+            Header: 'Рабочий тел.',
+            accessor: 'managerWorkPhone',
+          },
+          {
+            Header: 'Личный тел.',
+            accessor: 'managerPersonalPhone',
+          },
+          {
+            Header: 'Почта',
+            accessor: 'managerEmail',
+            width: 100,
+            minWidth: 150,
+            whiteSpace: 'unset',
+            disableFilters: true,
+          },
+        ]
       },
-        {Header: 'Телефон',
-        accessor: 'phone'
+      {
+        Header: 'Поддержка',
+        columns: [
+          {
+            Header: 'Почта',
+            accessor: 'supportEmail',
+          },
+          {
+            Header: 'Телефон',
+            accessor: 'supprotPhone',
+          },
+        ],
       },
-        {Header: 'Почта',
-        accessor: 'email'
+      {
+        Header: 'Строка',
+        columns: [
+          {
+            Header: 'дог. ',
+            id: 'Договора',
+            accessor: (str) => 'Договора',
+            disableFilters: true,
+            Cell: (tableProps) => (
+              <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
+                <Link to={`/contract/${tableProps.row.id}`}>
+                  <GrDocumentDownload />
+                </Link>
+              </span>
+            ),
+          },
+          {
+            Header: 'del',
+            id: 'del',
+            accessor: (str) => 'del',
+            disableFilters: true,
+            Cell: (tableProps) => (
+              <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                onClick={async () => {
+                  console.log(tableProps.row.original.id)
+                 await removeOrganization(tableProps.row.original.id)
+                  setOrganizations((await getOrganizations()).data)
+                }}>
+                <FcEmptyTrash />
+              </span>
+            ),
+          },
+        ]
       },
-      ]
-    },
-    
-      {Header: 'Менеджер',
-      columns:[
-        {Header: 'Имя Фамилия ',
-        accessor: 'manager'},
-        {Header: 'Рабочий тел.',
-        accessor: 'managerWorkPhone',
-      },
-      {Header: 'Личный тел.',
-      accessor: 'managerPersonalPhone',
-    },
-      {Header: 'Почта',
-      accessor: 'managerEmail',
-    },
-      ]
-  },
-        {Header: 'Поддержка',
-     columns: [
-      {Header: 'Почта',
-      accessor: 'supportEmail',
-    },
-    {Header: 'Телефон',
-    accessor: 'supprotPhone',
-  },
-     ],
-   },
     ],
-     []
+    [organizations]
   )
-  const data = useMemo(() =>  [
+  const [addFormData, setAddFormData] = useState(
     {
-      id: 1,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 2,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 3,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 4,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 5,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 6,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 7,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 8,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 9,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 10,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 11,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 12,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 13,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 14,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 15,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 16,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 17,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 18,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 19,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 20,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 21,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 22,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 23,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    {
-      id: 24,
-      name: "ООО Вымпелком",
-      phone: "234-678-943",
-      email: "beeline@email.ru",
-      manager: "Владимир Попов",
-      managerWorkPhone: "8-915-435-67-89",
-      managerPersonalPhone: "8-915-435-67-88",
-      managerEmail: "ghj@yandex.ru", 
-      supportEmail: "pop@rambler.ru",
-      supprotPhone: "356-897-567"
-    },
-    {
-      id: 25,
-      name: "ООО Мегафон",
-      phone: "333-444-555",
-      email: "megafon@email.ru",
-      manager: "Сергей Иванов",
-      managerWorkPhone: "8-920-876-45-56",
-      managerPersonalPhone: "8-920-876-45-57",
-      managerEmail: "Papany34rambler.ru", 
-      supportEmail: "megafon@email.ru",
-      supprotPhone: "555-666-777"
-    },
-    
-  ], [])
- 
+      name: '',
+      phone: '',
+      email: '',
+      manager: '',
+      managerWorkPhone: '',
+      managerPersonalPhone: '',
+      managerEmail: '',
+      supportEmail: '',
+      supprotPhone: ''
+    }
+  )
+  const handleAddFormChange = (event) => {
+    event.preventDefault()
+    const fieldName = event.target.getAttribute('name')
+    const fieldValue = event.target.value
+    const newFormData = { ...addFormData }
+    newFormData[fieldName] = fieldValue
+    setAddFormData(newFormData)
+  }
+  const handleAddFormSubmit = async (event) => {
+    event.preventDefault()
+    const organization = {
+      name: addFormData.name,
+      phone: addFormData.phone,
+      email: addFormData.email,
+      manager: addFormData.manager,
+      managerWorkPhone: addFormData.managerWorkPhone,
+      managerPersonalPhone: addFormData.managerPersonalPhone,
+      managerEmail: addFormData.managerEmail,
+      supportEmail: addFormData.supportEmail,
+      supprotPhone: addFormData.supprotPhone
+    }
+    postOrganization(organization)
+    setOrganizations((await getOrganizations()).data)
+  }
 
   return (
-    <div className="container mx-auto">
-    <Table columns = {columns} data = {data}/>
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <main className="w-screen mx-auto">
+        <div>
+          <h1 className='text-xl text-center font-semibold'>Список организаций партнёров Телеком СП</h1>
+          <div className='container-2xl mx-auto'>
+            <Table columns={columns} data={organizations} />
+            <AddOrganizationForm change={handleAddFormChange} submit={handleAddFormSubmit} text={'Добавить организацию'} />
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
+
+
+
+
+
 
 export default OrganizationPage;

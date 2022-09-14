@@ -1,3 +1,5 @@
+
+import React, {useState} from 'react'
 import {  useAsyncDebounce } from 'react-table'  
 
 
@@ -7,13 +9,13 @@ export  function GlobalFilter({
   setGlobalFilter,
 }) {
   const count = preGlobalFilteredRows.length
-  const [value, setValue] = React.useState(globalFilter)
+  const [value, setValue] = useState(globalFilter)
   const onChange = useAsyncDebounce(value => {
     setGlobalFilter(value || undefined)
   }, 200)
 
   return (
-    <span>
+    <span className='m-6'>
       Search:{' '}
       <input
         value={value || ""}
