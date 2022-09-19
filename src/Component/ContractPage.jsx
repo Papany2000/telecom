@@ -47,7 +47,7 @@ function ContractPage() {
         disableFilters: true,
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
-            <Link to={`/orders/${tableProps.row.id}`}>
+            <Link to={`/orders/${tableProps.row.original.id}`}>
               <GrDocumentDownload />
             </Link>
           </span>

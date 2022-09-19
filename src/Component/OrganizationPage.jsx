@@ -92,13 +92,15 @@ function OrganizationPage() {
             id: 'Договора',
             accessor: (str) => 'Договора',
             disableFilters: true,
-            Cell: (tableProps) => (
+            Cell: (tableProps) => {
+              console.log(tableProps)
+             return (
               <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
-                <Link to={`/contract/${tableProps.row.id}`}>
+                <Link to={`/contract/${tableProps.row.original.id}`}>
                   <GrDocumentDownload />
                 </Link>
               </span>
-            ),
+            )},
           },
           {
             Header: 'del',

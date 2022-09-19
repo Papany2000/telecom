@@ -12,7 +12,7 @@ function AddOrderForm(props) {
          type='text'
          name='contractId'
          required='required'
-         placeholder='введите Id договора'
+         placeholder='введите  contractId'
          onChange={props.change}
         />
         <input className='w-30 border text-center'

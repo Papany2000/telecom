@@ -2,9 +2,9 @@ import axios from 'axios';
 import { serverUrl } from '../Component/config'
 
 
-export const getOrganizations = async function (page, pageSize) {
+export const getOrganizations = async function (page, limit) {
     if(page) {
-        return axios.get(serverUrl + '/organization' + `${page && '?page=' + page}` + `${pageSize && '&pageSize=' + pageSize}`)
+        return axios.get(serverUrl + '/organization' + `${page && '?page=' + page}` + `${limit && '&limit=' + limit || 10}`)
     } else {
         return axios.get(`${serverUrl}/organization`)
     } 

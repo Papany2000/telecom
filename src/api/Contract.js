@@ -2,9 +2,9 @@ import axios from 'axios';
 import { serverUrl } from '../Component/config'
 
 
-export const getContracts = async function (page, pageSize) {
-    if(page) {
-        return axios.get(serverUrl + '/contract' + `${page && '?page=' + page}` + `${pageSize && '&pageSize=' + pageSize}`)
+export const getContracts = async function (organizationId) {
+    if(organizationId) {
+        return axios.get(serverUrl + '/contract' + `${organizationId && '?organizationId=' + organizationId}`)
     } else {
         return axios.get(`${serverUrl}/contract`)
     } 
