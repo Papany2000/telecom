@@ -77,6 +77,10 @@ function OrganizationPage() {
           {
             Header: 'Телефон',
             accessor: 'supprotPhone',
+            minwidth: 30,
+            width: 50,
+            whiteSpace: 'unset',
+            disableFilters: true,
           },
         ],
       },

@@ -1,33 +1,24 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState,useEffect } from 'react';
 import Table from './Table'
 import AddContractsForm from './AddContractsForm'
-import { nanoid } from 'nanoid'
 import { useParams, Link } from 'react-router-dom';
 import { FcEmptyTrash } from "react-icons/fc";
 import { GrDocumentDownload } from "react-icons/gr";
+import { getContracts, postContract, removeContract, getContract } from '../api/Contract'
+
 
 function ContractPage() {
-  const { id } = useParams()
-  const contractData = [
-    {
-      id: 0,
-      organizationId: 0,
-      number: "Договор № 1 от 22.08.2022",
-      description: "Расходный договор на предоставление каналов передачи данных",
-      isProfitable: false,
-      fileUuid: 'путь к файле договора в виде uuid'
-    },
-    {
-      id: 1,
-      organizationId: 0,
-      number: "Договор № 2 от 22.08.2022",
-      description: "Доходный договор на предоставление каналов передачи данных",
-      isProfitable: true,
-      fileUuid: 'путь к файле договора в виде uuid'
-    },
-  ];
+  const routeParams = useParams();
+  const [contracts, setContracts] = useState([])
+  useEffect(() => {
+    getContracts(routeParams.id)
+      .then(
+        (result) => {
+          setContracts(result.data);
+        }
+      )
+  }, [routeParams.id])
 
-  const [contracts, setContracts] = useState(id ? contractData.filter(el => el.organizationId === Number(id)) : contractData)
   const columns1 = useMemo(
     () => [
       {
@@ -70,13 +61,11 @@ function ContractPage() {
         disableFilters: true,
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-            onClick={() => {
-              // ES6 Syntax use the rvalue if your data is an array.  
-              const contractsCopy = [...contracts];
-              // It should not matter what you name tableProps. It made the most sense to me.
-              contractsCopy.splice(tableProps.row.index, 1);
-              setContracts(contractsCopy);
-            }}>
+          onClick={async () => {
+            console.log(tableProps.row.original.id)
+           await removeContract(tableProps.row.original.id)
+            setContracts((await getContracts()).data)
+          }}>
             <FcEmptyTrash />
           </span>
         ),
@@ -86,7 +75,7 @@ function ContractPage() {
   )
   const [addFormData, setAddFormData] = useState(
     {
-      organizationId: '',
+      organizationId: {},
       number: '',
       description: '',
       isProfitable: '',
@@ -101,17 +90,17 @@ function ContractPage() {
     newFormData[fieldName] = fieldValue
     setAddFormData(newFormData)
   }
-  const handleAddFormSubmit = (event) => {
+  const handleAddFormSubmit = async (event) => {
     event.preventDefault()
     const contract = {
-      organizationId: nanoid(),
-      phone: addFormData.number,
-      email: addFormData.description,
-      manager: addFormData.isProfitable,
-      managerWorkPhone: addFormData.fileUuid,
+      organizationId:  addFormData.organizationId,
+      number: addFormData.number,
+      description: addFormData.description,
+      isProfitable: addFormData.isProfitable,
+      fileUuid: addFormData.fileUuid,
     }
-    const newContracts = [...contracts, contract]
-    setContracts(newContracts)
+    postContract(contract)
+    setContracts((await getContracts()).data)
   }
 
   return (

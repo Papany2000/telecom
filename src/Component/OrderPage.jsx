@@ -1,88 +1,21 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Table from './Table'
-import AddOrderForm from './AddContractsForm'
-import { nanoid } from 'nanoid'
+import AddOrderForm from './AddOrderForm'
 import { useParams } from 'react-router-dom';
 import { FcEmptyTrash } from "react-icons/fc";
-
+import { getOrders, postOrder, removeOrder } from '../api/Order'
 function OrderPage() {
-  const { id } = useParams()
-  const orderData = [
-    {
-      contractId: 0,
-      number: "Бланк Заказа №1",
-      description: "Канал с Большой Морской 18 до Большой Монетной 26",
-      type: 'orderType.l2Vpn',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567789",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи на канале Канал с Большой Морской 26 до Большой Морской 18, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 1"
-    },
-    {
-      contractId: 0,
-      number: "Бланк Заказа №2",
-      description: "Канал с Большой Морской 26 до Точка 2",
-      type: 'orderType.l2Vpn',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567788",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи на канале Канал с Большой Морской 26 до Точка 2, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 2"
-    },
-    {
-      contractId: 1,
-      number: "Бланк Заказа №3",
-      description: "Канал с Большой Морской 26 до Точка 3",
-      type: 'orderType.l2Vpn',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567787",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи на канале Канал с Большой Морской 26 до Точка 3, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 3"
-    },
-    {
-      contractId: 2,
-      number: "Бланк Заказа №4",
-      description: "Канал с Большой Морской 26 до Точка 4",
-      type: 'orderType.l2Vpn',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567783",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи на канале Канал с Большой Морской 26 до Точка 4, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 4"
-    },
-    {
-      contractId: 3,
-      number: "Бланк Заказа №1",
-      description: "Интернет по адресу 1",
-      type: 'orderType.internet',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567589",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи Интернет по адресу 1, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 1"
-    },
-    {
-      contractId: 4,
-      number: "Бланк Заказа №2",
-      description: "Интернет по адресу 2",
-      type: 'orderType.internet',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567689",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи Интернет по адресу 2, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 2"
-    },
-    {
-      contractId: 5,
-      number: "Бланк Заказа №3",
-      description: "Интернет по адресу 3",
-      type: 'orderType.internet',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567989",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи Интернет по адресу 3, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 3"
-    },
-    {
-      contractId: 6,
-      number: "Бланк Заказа №4",
-      description: "Интернет по адресу 4",
-      type: 'orderType.internet',
-      supportEmail: "Papany@rambler.ru",
-      supprotPhone: "9209567189",
-      supprotEmialTemplate: "Добрый день. К нам обратился клиент с жалобой на отсутствие связи Интернет по адресу 4, арендуемом у вас по договору № 1 от 22.08.2022, бланк заказа № 4"
-    },
-  ];
+  const routeParams = useParams();
+  const [orders, setOrders] = useState([])
+  useEffect(() => {
+    getOrders(routeParams.id)
+      .then(
+        (result) => {
+          setOrders(result.data);
+        }
+      )
+  }, [routeParams.id])
 
-  const [orders, setOrders] = useState(id ? orderData.filter(el => el.contractId === Number(id)) : orderData)
   const columns2 = useMemo(
     () => [
       {
@@ -128,14 +61,11 @@ function OrderPage() {
         disableFilters: true,
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-            onClick={() => {
-              // ES6 Syntax use the rvalue if your data is an array.  
-              const ordersCopy = [...orders];
-              // It should not matter what you name tableProps. It made the most sense to me.
-              ordersCopy.splice(tableProps.row.index, 1);
-              setOrders(ordersCopy);
-              console.log(tableProps)
-            }}>
+          onClick={async () => {
+            console.log(tableProps.row.original.id)
+           await removeOrder(tableProps.row.original.id)
+            setOrders((await getOrders()).data)
+          }}>
             <FcEmptyTrash />
           </span>
         ),
@@ -145,11 +75,13 @@ function OrderPage() {
   )
   const [addFormData, setAddFormData] = useState(
     {
-      organizationId: '',
+      contractId: '',
       number: '',
       description: '',
-      isProfitable: '',
-      fileUuid: '',
+      type: '',
+      supportEmail: '',
+      supprotPhone: '',
+      supprotEmialTemplate: '',
     }
   )
   const handleAddFormChange = (event) => {
@@ -160,17 +92,19 @@ function OrderPage() {
     newFormData[fieldName] = fieldValue
     setAddFormData(newFormData)
   }
-  const handleAddFormSubmit = (event) => {
+  const handleAddFormSubmit = async (event) => {
     event.preventDefault()
     const order = {
-      organizationId: nanoid(),
-      phone: addFormData.number,
-      email: addFormData.description,
-      manager: addFormData.isProfitable,
-      managerWorkPhone: addFormData.fileUuid,
+      contractId: addFormData.contractId,
+     number: addFormData.number,
+     description: addFormData.description,
+     type: addFormData.type,
+     supportEmail: addFormData.supportEmail,
+     supprotPhone: addFormData.supprotPhone,
+     supprotEmialTemplate:addFormData.supprotEmialTemplate,
     }
-    const newOrders = [...orders, order]
-    setOrders(newOrders)
+    postOrder(order)
+    setOrders((await getOrders()).data)
   }
 
   return (
@@ -185,10 +119,5 @@ function OrderPage() {
     </div>
   );
 }
-
-
-
-
-
 
 export default OrderPage;

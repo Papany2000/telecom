@@ -8,18 +8,18 @@ function AddOrderForm(props) {
     <div>
      <h2 className='w-80 mx-auto my-7 font-serif decoration-2'>{props.text}</h2>
      <form className='w-11/12 mt-3 mx-auto' onSubmit={props.submit}>
-        <input className='w-30 border text-center'
+     <input className='w-30 border text-center'
          type='text'
-         name=' contractId'
+         name='contractId'
          required='required'
-         placeholder='введите id дговора'
+         placeholder='введите Id договора'
          onChange={props.change}
         />
-         <input className='w-30 mx-1 border text-center'
+        <input className='w-30 border text-center'
          type='text'
          name='number'
          required='required'
-         placeholder='введите №'
+         placeholder='введите № заказа'
          onChange={props.change}
         />
          <input className='w-30 mx-1 border text-center'
@@ -50,7 +50,7 @@ function AddOrderForm(props) {
          placeholder='введите тел.'
          onChange={props.change}
         />
-         <input className='w-28 mx-1 border text-center'
+         <input className='w-52 mx-1 border text-center'
          type='text'
          name='supprotEmialTemplate'
          required='required'
