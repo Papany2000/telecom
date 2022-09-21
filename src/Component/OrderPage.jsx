@@ -62,7 +62,6 @@ function OrderPage() {
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
           onClick={async () => {
-            console.log(tableProps.row.original.id)
            await removeOrder(tableProps.row.original.id)
             setOrders((await getOrders()).data)
           }}>

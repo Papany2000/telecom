@@ -1,5 +1,5 @@
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import Table from './Table'
 import AddOrganizationForm from './AddOrganizationForm'
 import { Link } from 'react-router-dom'
@@ -27,6 +27,10 @@ function OrganizationPage() {
         Header: 'Организации',
       
         columns: [
+          {
+            Header: 'id',
+            accessor: 'id',
+          },
           {
             Header: 'Организация',
             accessor: 'name',
@@ -89,11 +93,10 @@ function OrganizationPage() {
         columns: [
           {
             Header: 'дог. ',
-            id: 'Договора',
-            accessor: (str) => 'Договора',
+            id: 'dog',
+            accessor: (str) => 'dog',
             disableFilters: true,
             Cell: (tableProps) => {
-              console.log(tableProps)
              return (
               <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
                 <Link to={`/contract/${tableProps.row.original.id}`}>
@@ -110,7 +113,7 @@ function OrganizationPage() {
             Cell: (tableProps) => (
               <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
                 onClick={async () => {
-                  console.log(tableProps.row.original.id)
+              
                  await removeOrganization(tableProps.row.original.id)
                   setOrganizations((await getOrganizations()).data)
                 }}>
@@ -123,6 +126,7 @@ function OrganizationPage() {
     ],
     [organizations]
   )
+  const inputEl = useRef(null);
   const [addFormData, setAddFormData] = useState(
     {
       name: '',
@@ -136,6 +140,7 @@ function OrganizationPage() {
       supprotPhone: ''
     }
   )
+  
   const handleAddFormChange = (event) => {
     event.preventDefault()
     const fieldName = event.target.getAttribute('name')
@@ -144,6 +149,7 @@ function OrganizationPage() {
     newFormData[fieldName] = fieldValue
     setAddFormData(newFormData)
   }
+  
   const handleAddFormSubmit = async (event) => {
     event.preventDefault()
     const organization = {
@@ -157,10 +163,11 @@ function OrganizationPage() {
       supportEmail: addFormData.supportEmail,
       supprotPhone: addFormData.supprotPhone
     }
-    postOrganization(organization)
+     postOrganization(organization)
     setOrganizations((await getOrganizations()).data)
+    inputEl.current.value = '';
   }
-
+   
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
       <main className="w-screen mx-auto">
@@ -168,7 +175,7 @@ function OrganizationPage() {
           <h1 className='text-xl text-center font-semibold'>Список организаций партнёров Телеком СП</h1>
           <div className='container-2xl mx-auto'>
             <Table columns={columns} data={organizations} />
-            <AddOrganizationForm change={handleAddFormChange} submit={handleAddFormSubmit} text={'Добавить организацию'} />
+          <AddOrganizationForm change={handleAddFormChange} inputEl={inputEl} submit={handleAddFormSubmit}  text={'Добавить организацию'} />
           </div>
         </div>
       </main>

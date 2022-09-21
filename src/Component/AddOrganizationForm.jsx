@@ -3,7 +3,7 @@ import React from 'react'
 
 function AddOrganizationForm(props) {
 
-
+ 
   return (
     <div>
      <h2 className='w-80 mx-auto my-7 font-serif decoration-2'>{props.text}</h2>
@@ -13,6 +13,7 @@ function AddOrganizationForm(props) {
          name='name'
          required='required'
          placeholder='введите имя'
+         ref={props.inputEl}
          onChange={props.change}
         />
          <input className='w-28 mx-1 border text-center'
@@ -72,7 +73,8 @@ function AddOrganizationForm(props) {
          onChange={props.change}
         />
         <button type='submit' className='w-28 border mx-1 bg-sky-500 text-center'>add</button>
-        </form>   
+        </form>  
+       
    
     
     </div>

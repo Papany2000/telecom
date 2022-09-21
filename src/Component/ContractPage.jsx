@@ -22,6 +22,10 @@ function ContractPage() {
   const columns1 = useMemo(
     () => [
       {
+        Header: 'id',
+        accessor: 'id',
+      },
+      {
         Header: 'Номер договора',
         accessor: 'number'
       },
@@ -62,7 +66,6 @@ function ContractPage() {
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
           onClick={async () => {
-            console.log(tableProps.row.original.id)
            await removeContract(tableProps.row.original.id)
             setContracts((await getContracts()).data)
           }}>

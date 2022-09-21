@@ -64,6 +64,8 @@ function Table({ columns, data, }) {
     setPageSize,
     state,
     preGlobalFilteredRows,
+    allColumns,
+    getToggleHideAllColumnsProps,
     setGlobalFilter,
   } = useTable({
     columns,
@@ -76,12 +78,53 @@ function Table({ columns, data, }) {
     useSortBy,
     usePagination,
   )
+  const IndeterminateCheckbox = React.forwardRef(
+    ({ indeterminate, ...rest }, ref) => {
+      const defaultRef = React.useRef()
+      const resolvedRef = ref || defaultRef
+
+      React.useEffect(() => {
+        resolvedRef.current.indeterminate = indeterminate
+      }, [resolvedRef, indeterminate])
+
+      return <input type="checkbox" ref={resolvedRef} {...rest} />
+    }
+  )
+  const a = { 
+    id: 'id',
+    name: "Организация",
+    phone: "телефон",
+    email: "почта",
+    manager: "менеджер",
+    managerWorkPhone: "тел. рабочий",
+    managerPersonalPhone: "тел. личный",
+    managerEmail: "почта",
+    supportEmail: "почта поддержки",
+    supprotPhone: "тел. поддержки",
+    dog: "договор",
+    del: "del",
+  }
   return (
     <>
       <div className="mt-2 flex flex-col">
         <div className="my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"></div>
+            <div  className='mx-6 flex'>
+              <div className='my-3.5'>
+                <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} /> Toggle
+                All
+              </div>
+              {allColumns.map(column => (
+                <div key={column.id} className='mx-6 my-3.5'>
+                  <label>
+                    <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
+                    {a[column.id]}
+                  </label>
+                </div>
+              ))}
+              <br />
+            </div>
             <GlobalFilter
               preGlobalFilteredRows={preGlobalFilteredRows}
               globalFilter={state.globalFilter}
