@@ -126,7 +126,7 @@ function OrganizationPage() {
     ],
     [organizations]
   )
-  const inputEl = useRef(null);
+  
   const [addFormData, setAddFormData] = useState(
     {
       name: '',
@@ -165,7 +165,20 @@ function OrganizationPage() {
     }
      postOrganization(organization)
     setOrganizations((await getOrganizations()).data)
-    inputEl.current.value = '';
+  }
+  const a = { 
+    id: 'id',
+    name: "Организация",
+    phone: "телефон",
+    email: "почта",
+    manager: "менеджер",
+    managerWorkPhone: "тел. рабочий",
+    managerPersonalPhone: "тел. личный",
+    managerEmail: "почта",
+    supportEmail: "почта поддержки",
+    supprotPhone: "тел. поддержки",
+    dog: "договор",
+    del: "del",
   }
    
   return (
@@ -174,8 +187,8 @@ function OrganizationPage() {
         <div>
           <h1 className='text-xl text-center font-semibold'>Список организаций партнёров Телеком СП</h1>
           <div className='container-2xl mx-auto'>
-            <Table columns={columns} data={organizations} />
-          <AddOrganizationForm change={handleAddFormChange} inputEl={inputEl} submit={handleAddFormSubmit}  text={'Добавить организацию'} />
+            <Table columns={columns} data={organizations} a={a}/>
+          <AddOrganizationForm change={handleAddFormChange}  addFormData={addFormData} submit={handleAddFormSubmit}  text={'Добавить организацию'} />
           </div>
         </div>
       </main>

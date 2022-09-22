@@ -105,13 +105,24 @@ function OrderPage() {
     postOrder(order)
     setOrders((await getOrders()).data)
   }
+  const a = { 
+    id: 'id',
+    contractId: "id договора",
+    number: "№ заказа",
+    description: "краткое содержание",
+    type: "тип файла",
+    supportEmail: "почта поддержки",
+    supprotPhone: "тел. поддержки",
+    supprotEmialTemplate: "сообщение",
+    del: "удалить"
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
       <main className="w-90vn mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className='text-center italic font-bold my-5'>Список  заказов</h1>
         <div>
-          <Table columns={columns2} data={orders} />
+          <Table columns={columns2} data={orders} a={a}/>
           <AddOrderForm change={handleAddFormChange} submit={handleAddFormSubmit} text={'Добавить заказ'} />
         </div>
       </main>

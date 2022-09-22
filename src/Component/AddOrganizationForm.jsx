@@ -13,14 +13,13 @@ function AddOrganizationForm(props) {
          name='name'
          required='required'
          placeholder='введите имя'
-         ref={props.inputEl}
          onChange={props.change}
         />
          <input className='w-28 mx-1 border text-center'
          type='text'
          name='phone'
          required='required'
-         placeholder='введите тел.'
+         placeholder='введите тел.' 
          onChange={props.change}
         />
          <input className='w-30 mx-1 border text-center'
@@ -35,6 +34,7 @@ function AddOrganizationForm(props) {
          name='manager'
          required='required'
          placeholder='имя менеджера'
+        
          onChange={props.change}
         />
          <input className='w-28 mx-1 border text-center'
@@ -42,6 +42,7 @@ function AddOrganizationForm(props) {
          name='managerWorkPhone'
          required='required'
          placeholder='раб. тел.'
+        
          onChange={props.change}
         />
          <input className='w-28 mx-1 border text-center'

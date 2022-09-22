@@ -45,8 +45,8 @@ function ContractPage() {
       },
       {
         Header: 'Заказы',
-        id: 'Заказы',
-        accessor: (str) => 'Заказы',
+        id: 'zacaz',
+        accessor: (str) => 'zacaz',
         width: 50,
         disableFilters: true,
         Cell: (tableProps) => (
@@ -76,6 +76,16 @@ function ContractPage() {
     ],
     [contracts]
   )
+  const a = { 
+    id: 'id',
+    organizationId: "id организации",
+    number: "№ договора",
+    description: "краткое содержание",
+    isProfitable: "доходный расходный",
+    fileUuid: "путь к файлу",
+    zacaz: "заказы",
+    del: "del",
+  }
   const [addFormData, setAddFormData] = useState(
     {
       organizationId: {},
@@ -111,7 +121,7 @@ function ContractPage() {
       <main className="w-90vn mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className='text-center italic font-bold my-5'>Список договоров Телеком СП</h1>
         <div className='container'>
-          <Table columns={columns1} data={contracts} />
+          <Table columns={columns1} data={contracts} a={a} />
           <AddContractsForm change={handleAddFormChange} submit={handleAddFormSubmit} text={'Добавить договор'} />
         </div>
       </main>

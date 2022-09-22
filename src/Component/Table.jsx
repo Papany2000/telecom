@@ -26,7 +26,7 @@ function GlobalFilter({
     </span>
   )
 }
-function Table({ columns, data, }) {
+function Table({ columns, data, a}) {
   const filterTypes = React.useMemo(
     () => ({
       text: (rows, id, filterValue) => {
@@ -71,7 +71,8 @@ function Table({ columns, data, }) {
     columns,
     data,
     defaultColumn,
-    filterTypes
+    filterTypes,
+    a
   },
     useFilters,
     useGlobalFilter,
@@ -90,20 +91,7 @@ function Table({ columns, data, }) {
       return <input type="checkbox" ref={resolvedRef} {...rest} />
     }
   )
-  const a = { 
-    id: 'id',
-    name: "Организация",
-    phone: "телефон",
-    email: "почта",
-    manager: "менеджер",
-    managerWorkPhone: "тел. рабочий",
-    managerPersonalPhone: "тел. личный",
-    managerEmail: "почта",
-    supportEmail: "почта поддержки",
-    supprotPhone: "тел. поддержки",
-    dog: "договор",
-    del: "del",
-  }
+ 
   return (
     <>
       <div className="mt-2 flex flex-col">
