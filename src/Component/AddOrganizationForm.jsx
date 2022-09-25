@@ -1,85 +1,93 @@
-import React from 'react'
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { getOrganizations, postOrganization } from '../api/Organization'
 
 
 function AddOrganizationForm(props) {
-
- 
-  return (
-    <div>
-     <h2 className='w-80 mx-auto my-7 font-serif decoration-2'>{props.text}</h2>
-     <form className='w-11/12 mt-3 mx-auto' onSubmit={props.submit}>
-        <input className='w-28 border text-center'
-         type='text'
-         name='name'
-         required='required'
-         placeholder='введите имя'
-         onChange={props.change}
-        />
-         <input className='w-28 mx-1 border text-center'
-         type='text'
-         name='phone'
-         required='required'
-         placeholder='введите тел.' 
-         onChange={props.change}
-        />
-         <input className='w-30 mx-1 border text-center'
-         type='text'
-         name='email'
-         required='required'
-         placeholder='введите почту'
-         onChange={props.change}
-        />
-         <input className='w-30 mx-1 border text-center'
-         type='text'
-         name='manager'
-         required='required'
-         placeholder='имя менеджера'
-        
-         onChange={props.change}
-        />
-         <input className='w-28 mx-1 border text-center'
-         type='text'
-         name='managerWorkPhone'
-         required='required'
-         placeholder='раб. тел.'
-        
-         onChange={props.change}
-        />
-         <input className='w-28 mx-1 border text-center'
-         type='text'
-         name='managerPersonalPhone'
-         required='required'
-         placeholder='личн. тел.'
-         onChange={props.change}
-        />
-         <input className='w-30 mx-1 border text-center'
-         type='text'
-         name='managerEmail'
-         required='required'
-         placeholder='личн. почту'
-         onChange={props.change}
-        />
-         <input className='w-30 mx-1 border text-center'
-         type='text'
-         name='supportEmail'
-         required='required'
-         placeholder='почту поддержки'
-         onChange={props.change}
-        />
-         <input className='w-30 border mx-1 text-center'
-         type='text'
-         name='supprotPhone'
-         required='required'
-         placeholder='тел. поддержки'
-         onChange={props.change}
-        />
-        <button type='submit' className='w-28 border mx-1 bg-sky-500 text-center'>add</button>
-        </form>  
-       
-   
-    
-    </div>
-  );
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onBlur'
+  });
+  const onSabmit =  async (data) => {
+    console.log(data)
+    postOrganization(data)
+    props.setOrganizations((await getOrganizations()).data)
+    reset()
   }
 
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSabmit)} className='text-center'>
+        <label>
+          Организация:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('name', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors?.name && <p className='text-center text-red-600'>{errors?.name?.message || "error"}</p>}
+        </div>
+        <label>
+          Телефон:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('phone', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.phone && <p className='text-center text-red-600'>{errors?.phone?.message || "error"}</p>}
+        </div>
+        <label>
+          Почта:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('email', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.email && <p className='text-center text-red-600'>{errors?.email?.message || "error"}</p>}
+        </div>
+        <label>
+          Менеджер:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('manager', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.manager && <p className='text-center text-red-600'>{errors?.manager?.message || "error"}</p>}
+        </div>
+        <label>
+          Рабочий телефон:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('managerWorkPhone', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.managerWorkPhone && <p className='text-center text-red-600'>{errors?.managerWorkPhone?.message || "error"}</p>}
+        </div>
+        <label>
+          Личный телефон:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('managerPersonalPhone', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.managerPersonalPhone && <p className='text-center text-red-600'>{errors?.managerPersonalPhone?.message || "error"}</p>}
+        </div>
+        <label>
+          Почта менеджера:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('managerEmail', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.managerEmail && <p className='text-center text-red-600'>{errors?.managerEmail?.message || "error"}</p>}
+        </div>
+        <label>
+          Почта поддержки:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('supportEmail', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.supportEmail && <p className='text-center text-red-600'>{errors?.supportEmail?.message || "error"}</p>}
+        </div>
+        <label>
+          Телефон поддержки:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('supprotPhone', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.supprotPhone && <p className='text-center text-red-600'>{errors?.supportPhone?.message || "error"}</p>}
+        </div>
+        <input type="submit" className='border px-2 py-2 bg-yellow-400' />
+      </form>
+    </div>
+  );
+}
 export default AddOrganizationForm;

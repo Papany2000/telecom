@@ -1,55 +1,69 @@
 import React from 'react'
+import { useForm } from 'react-hook-form';
+import { getContracts, postContract } from '../api/Contract';
+import { getOrganizations, postOrganization } from '../api/Organization'
 
 
 function AddContractsForm(props) {
-
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onBlur'
+  });
+  const onSabmit =  async (data) => {
+    console.log(data)
+    postContract(data)
+    props.setContracts((await getContracts()).data)
+    reset()
+  }
 
   return (
     <div>
-     <h2 className='w-80 mx-auto my-7 font-serif decoration-2'>{props.text}</h2>
-     <form className='w-11/12 mt-3 mx-auto' onSubmit={props.submit}>
-        <input className='border text-center'
-         type='text'
-         name='organizationId'
-         required='required'
-         placeholder='введите id организации'
-         onChange={props.change}
-        />
-         <input className='mx-1 border text-center'
-         type='text'
-         name='number'
-         required='required'
-         placeholder='введите №'
-         onChange={props.change}
-        />
-         <input className='mx-1 border text-center'
-         type='text'
-         name='description'
-         required='required'
-         placeholder='введите описание'
-         onChange={props.change}
-        />
-         <input className='mx-1 border text-center'
-         type='text'
-         name='isProfitable'
-         required='required'
-         placeholder='true/false'
-         onChange={props.change}
-        />
-         <input className='mx-1 border text-center'
-         type='text'
-         name='fileUuid'
-         required='required'
-         placeholder='введите путь к файлу'
-         onChange={props.change}
-        />
-       
-        <button type='submit' className='border mx-1 bg-sky-500 text-center'>add</button>
-        </form>   
-   
-    
+      <form onSubmit={handleSubmit(onSabmit)} className='text-center'>
+        <label>
+           Id Организации:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('organizationId', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors?.organizationId && <p className='text-center text-red-600'>{errors?.organizationId?.message || "error"}</p>}
+        </div>
+        <label>
+          № заказа:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('number', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.number && <p className='text-center text-red-600'>{errors?.number?.message || "error"}</p>}
+        </div>
+        <label>
+          Описание:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('description', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.description && <p className='text-center text-red-600'>{errors?.description?.message || "error"}</p>}
+        </div>
+        <label>
+          Договор расходный или доходный:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('isProfitable', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.isProfitable && <p className='text-center text-red-600'>{errors?.isProfitable?.message || "error"}</p>}
+        </div>
+        <label>
+          Путь к договору:
+          <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('fileUuid', { required: 'Поле обязательно к заполнению' })} />
+        </label>
+        <div>
+          {errors.fileUuid && <p className='text-center text-red-600'>{errors?.fileUuid?.message || "error"}</p>}
+        </div>
+        <input type="submit" className='border px-2 py-2 bg-yellow-400' />
+      </form>
     </div>
   );
-  }
+}
+
+ 
 
 export default AddContractsForm;

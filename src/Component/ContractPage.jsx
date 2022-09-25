@@ -1,14 +1,16 @@
-import { useMemo, useState,useEffect } from 'react';
+import { useMemo, useState,useEffect, useContext } from 'react';
 import Table from './Table'
 import AddContractsForm from './AddContractsForm'
 import { useParams, Link } from 'react-router-dom';
 import { FcEmptyTrash } from "react-icons/fc";
 import { GrDocumentDownload } from "react-icons/gr";
 import { getContracts, postContract, removeContract, getContract } from '../api/Contract'
-
+import { ModalContext } from './Context/ModalContext'
+import Modal from './Modal';
 
 function ContractPage() {
   const routeParams = useParams();
+  const { modal, open, close } = useContext(ModalContext)
   const [contracts, setContracts] = useState([])
   useEffect(() => {
     getContracts(routeParams.id)
@@ -121,8 +123,11 @@ function ContractPage() {
       <main className="w-90vn mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className='text-center italic font-bold my-5'>Список договоров Телеком СП</h1>
         <div className='container'>
+        <button className='absolute top right-2 rounded-full bg-red-700 text-white text-2xl px-4 py-2' onClick={open}>+</button>
           <Table columns={columns1} data={contracts} a={a} />
-          <AddContractsForm change={handleAddFormChange} submit={handleAddFormSubmit} text={'Добавить договор'} />
+          {modal && <Modal  title='Create new Organization' onClose={close}>
+        <AddContractsForm setContracts = {setContracts} />
+      </Modal>}
         </div>
       </main>
     </div>

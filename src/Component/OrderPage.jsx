@@ -1,11 +1,16 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useContext } from 'react';
 import Table from './Table'
 import AddOrderForm from './AddOrderForm'
 import { useParams } from 'react-router-dom';
 import { FcEmptyTrash } from "react-icons/fc";
-import { getOrders, postOrder, removeOrder } from '../api/Order'
+import { getOrders, removeOrder } from '../api/Order'
+import { ModalContext } from './Context/ModalContext'
+import Modal from './Modal';
+
+
 function OrderPage() {
   const routeParams = useParams();
+  const { modal, open, close } = useContext(ModalContext)
   const [orders, setOrders] = useState([])
   useEffect(() => {
     getOrders(routeParams.id)
@@ -83,28 +88,6 @@ function OrderPage() {
       supprotEmialTemplate: '',
     }
   )
-  const handleAddFormChange = (event) => {
-    event.preventDefault()
-    const fieldName = event.target.getAttribute('name')
-    const fieldValue = event.target.value
-    const newFormData = { ...addFormData }
-    newFormData[fieldName] = fieldValue
-    setAddFormData(newFormData)
-  }
-  const handleAddFormSubmit = async (event) => {
-    event.preventDefault()
-    const order = {
-      contractId: addFormData.contractId,
-     number: addFormData.number,
-     description: addFormData.description,
-     type: addFormData.type,
-     supportEmail: addFormData.supportEmail,
-     supprotPhone: addFormData.supprotPhone,
-     supprotEmialTemplate:addFormData.supprotEmialTemplate,
-    }
-    postOrder(order)
-    setOrders((await getOrders()).data)
-  }
   const a = { 
     id: 'id',
     contractId: "id договора",
@@ -122,8 +105,11 @@ function OrderPage() {
       <main className="w-90vn mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className='text-center italic font-bold my-5'>Список  заказов</h1>
         <div>
+        <button className='absolute top right-2 rounded-full bg-red-700 text-white text-2xl px-4 py-2' onClick={open}>+</button>
           <Table columns={columns2} data={orders} a={a}/>
-          <AddOrderForm change={handleAddFormChange} submit={handleAddFormSubmit} text={'Добавить заказ'} />
+          {modal && <Modal  title='Create new Organization' onClose={close}>
+        <AddOrderForm  setOrders = {setOrders} />
+      </Modal>}
         </div>
       </main>
     </div>

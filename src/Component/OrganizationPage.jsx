@@ -1,15 +1,18 @@
 
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useMemo, useState, useEffect, useContext} from 'react';
 import Table from './Table'
 import AddOrganizationForm from './AddOrganizationForm'
 import { Link } from 'react-router-dom'
 import { FcEmptyTrash } from "react-icons/fc";
 import { GrDocumentDownload } from "react-icons/gr";
 import { useParams } from 'react-router-dom'
-import { getOrganizations, postOrganization, removeOrganization } from '../api/Organization'
+import { getOrganizations, removeOrganization } from '../api/Organization'
+import { ModalContext } from './Context/ModalContext'
+import Modal from './Modal';
 
 function OrganizationPage() {
   const routeParams = useParams();
+  const { modal, open, close } = useContext(ModalContext)
   const [organizations, setOrganizations] = useState([]);
   useEffect(() => {
     getOrganizations(routeParams.id)
@@ -124,7 +127,7 @@ function OrganizationPage() {
         ]
       },
     ],
-    [organizations]
+   [organizations]
   )
   
   const [addFormData, setAddFormData] = useState(
@@ -140,32 +143,6 @@ function OrganizationPage() {
       supprotPhone: ''
     }
   )
-  
-  const handleAddFormChange = (event) => {
-    event.preventDefault()
-    const fieldName = event.target.getAttribute('name')
-    const fieldValue = event.target.value
-    const newFormData = { ...addFormData }
-    newFormData[fieldName] = fieldValue
-    setAddFormData(newFormData)
-  }
-  
-  const handleAddFormSubmit = async (event) => {
-    event.preventDefault()
-    const organization = {
-      name: addFormData.name,
-      phone: addFormData.phone,
-      email: addFormData.email,
-      manager: addFormData.manager,
-      managerWorkPhone: addFormData.managerWorkPhone,
-      managerPersonalPhone: addFormData.managerPersonalPhone,
-      managerEmail: addFormData.managerEmail,
-      supportEmail: addFormData.supportEmail,
-      supprotPhone: addFormData.supprotPhone
-    }
-     postOrganization(organization)
-    setOrganizations((await getOrganizations()).data)
-  }
   const a = { 
     id: 'id',
     name: "Организация",
@@ -187,8 +164,11 @@ function OrganizationPage() {
         <div>
           <h1 className='text-xl text-center font-semibold'>Список организаций партнёров Телеком СП</h1>
           <div className='container-2xl mx-auto'>
+          <button className='absolute top right-2 rounded-full bg-red-700 text-white text-2xl px-4 py-2' onClick={open}>+</button>
             <Table columns={columns} data={organizations} a={a}/>
-          <AddOrganizationForm change={handleAddFormChange}  addFormData={addFormData} submit={handleAddFormSubmit}  text={'Добавить организацию'} />
+            {modal && <Modal  title='Create new Organization' onClose={close}>
+        <AddOrganizationForm  setOrganizations = {setOrganizations} />
+      </Modal>}
           </div>
         </div>
       </main>
