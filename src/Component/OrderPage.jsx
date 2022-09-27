@@ -6,21 +6,29 @@ import { FcEmptyTrash } from "react-icons/fc";
 import { getOrders, removeOrder } from '../api/Order'
 import { ModalContext } from './Context/ModalContext'
 import Modal from './Modal';
-
+import {Loader} from './Loader'
+import {ErrorMessage} from './Error.Message'
 
 function OrderPage() {
   const routeParams = useParams();
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const { modal, open, close } = useContext(ModalContext)
   const [orders, setOrders] = useState([])
-  useEffect(() => {
+  useEffect(() =>  {
+    setError('')          // очистка ошибки при вторичной загрузке
+    setLoading(true)
     getOrders(routeParams.id)
-      .then(
-        (result) => {
-          setOrders(result.data);
-        }
-      )
+    .then(
+      (result) => {
+        setOrders(result.data);
+        setLoading(false)
+      })
+      .catch(error => {
+        setLoading(false)
+        setError(error.message)
+      })
   }, [routeParams.id])
-
   const columns2 = useMemo(
     () => [
       {
@@ -77,17 +85,6 @@ function OrderPage() {
     ],
     [orders]
   )
-  const [addFormData, setAddFormData] = useState(
-    {
-      contractId: '',
-      number: '',
-      description: '',
-      type: '',
-      supportEmail: '',
-      supprotPhone: '',
-      supprotEmialTemplate: '',
-    }
-  )
   const a = { 
     id: 'id',
     contractId: "id договора",
@@ -102,6 +99,8 @@ function OrderPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
+       {loading && <Loader/>}
+       {error && <ErrorMessage error={error}/>}
       <main className="w-90vn mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className='text-center italic font-bold my-5'>Список  заказов</h1>
         <div>

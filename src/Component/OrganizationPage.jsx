@@ -9,19 +9,34 @@ import { useParams } from 'react-router-dom'
 import { getOrganizations, removeOrganization } from '../api/Organization'
 import { ModalContext } from './Context/ModalContext'
 import Modal from './Modal';
+import {Loader} from './Loader'
+import {ErrorMessage} from './Error.Message'
+
+
 
 function OrganizationPage() {
   const routeParams = useParams();
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const { modal, open, close } = useContext(ModalContext)
   const [organizations, setOrganizations] = useState([]);
-  useEffect(() => {
-    getOrganizations(routeParams.id)
+ 
+  
+  useEffect(() =>  {
+   
+      setError('')          // очистка ошибки при вторичной загрузке
+      setLoading(true)
+      getOrganizations(routeParams.id)
       .then(
         (result) => {
           setOrganizations(result.data);
-        }
-      )
-  }, [routeParams.id])
+          setLoading(false)
+        })
+        .catch(error => {
+          setLoading(false)
+          setError(error.message)
+        })
+    }, [routeParams.id])
 
   const columns = useMemo(
     () => [
@@ -130,19 +145,7 @@ function OrganizationPage() {
    [organizations]
   )
   
-  const [addFormData, setAddFormData] = useState(
-    {
-      name: '',
-      phone: '',
-      email: '',
-      manager: '',
-      managerWorkPhone: '',
-      managerPersonalPhone: '',
-      managerEmail: '',
-      supportEmail: '',
-      supprotPhone: ''
-    }
-  )
+
   const a = { 
     id: 'id',
     name: "Организация",
@@ -160,6 +163,8 @@ function OrganizationPage() {
    
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
+       {loading && <Loader/>}
+       {error && <ErrorMessage error={error}/>}
       <main className="w-screen mx-auto">
         <div>
           <h1 className='text-xl text-center font-semibold'>Список организаций партнёров Телеком СП</h1>

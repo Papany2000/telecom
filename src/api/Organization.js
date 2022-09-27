@@ -2,7 +2,8 @@ import axios from 'axios';
 import { serverUrl } from '../Component/config'
 
 
-export const getOrganizations = async function (page, limit) {
+export const getOrganizations = async function (page, limit) { 
+    //throw new Error('это моя ошибка')
     if(page) {
         return axios.get(serverUrl + '/organization' + `${page && '?page=' + page}` + `${limit && '&limit=' + limit || 10}`)
     } else {

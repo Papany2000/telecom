@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { getContracts, postContract } from '../api/Contract';
-import { getOrganizations, postOrganization } from '../api/Organization'
+
 
 
 function AddContractsForm(props) {
@@ -15,7 +15,7 @@ function AddContractsForm(props) {
   });
   const onSabmit =  async (data) => {
     console.log(data)
-    postContract(data)
+   await postContract(data)
     props.setContracts((await getContracts()).data)
     reset()
   }

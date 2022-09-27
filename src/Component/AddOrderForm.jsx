@@ -15,7 +15,7 @@ function AddOrderForm(props) {
   });
   const onSabmit =  async (data) => {
     console.log(data)
-    postOrder(data)
+   await postOrder(data)
     props.setOrders((await getOrders()).data)
     reset()
   }

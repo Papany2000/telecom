@@ -4,21 +4,32 @@ import AddContractsForm from './AddContractsForm'
 import { useParams, Link } from 'react-router-dom';
 import { FcEmptyTrash } from "react-icons/fc";
 import { GrDocumentDownload } from "react-icons/gr";
-import { getContracts, postContract, removeContract, getContract } from '../api/Contract'
+import { getContracts,  removeContract} from '../api/Contract'
 import { ModalContext } from './Context/ModalContext'
 import Modal from './Modal';
+import {Loader} from './Loader'
+import {ErrorMessage} from './Error.Message'
 
 function ContractPage() {
   const routeParams = useParams();
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const { modal, open, close } = useContext(ModalContext)
   const [contracts, setContracts] = useState([])
-  useEffect(() => {
+  useEffect(() =>  {
+   
+    setError('')          // очистка ошибки при вторичной загрузке
+    setLoading(true)
     getContracts(routeParams.id)
-      .then(
-        (result) => {
-          setContracts(result.data);
-        }
-      )
+    .then(
+      (result) => {
+        setContracts(result.data);
+        setLoading(false)
+      })
+      .catch(error => {
+        setLoading(false)
+        setError(error.message)
+      })
   }, [routeParams.id])
 
   const columns1 = useMemo(
@@ -88,38 +99,12 @@ function ContractPage() {
     zacaz: "заказы",
     del: "del",
   }
-  const [addFormData, setAddFormData] = useState(
-    {
-      organizationId: {},
-      number: '',
-      description: '',
-      isProfitable: '',
-      fileUuid: '',
-    }
-  )
-  const handleAddFormChange = (event) => {
-    event.preventDefault()
-    const fieldName = event.target.getAttribute('name')
-    const fieldValue = event.target.value
-    const newFormData = { ...addFormData }
-    newFormData[fieldName] = fieldValue
-    setAddFormData(newFormData)
-  }
-  const handleAddFormSubmit = async (event) => {
-    event.preventDefault()
-    const contract = {
-      organizationId:  addFormData.organizationId,
-      number: addFormData.number,
-      description: addFormData.description,
-      isProfitable: addFormData.isProfitable,
-      fileUuid: addFormData.fileUuid,
-    }
-    postContract(contract)
-    setContracts((await getContracts()).data)
-  }
+
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
+        {loading && <Loader/>}
+       {error && <ErrorMessage error={error}/>}
       <main className="w-90vn mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className='text-center italic font-bold my-5'>Список договоров Телеком СП</h1>
         <div className='container'>

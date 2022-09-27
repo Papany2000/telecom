@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useForm } from 'react-hook-form';
 import { getOrganizations, postOrganization } from '../api/Organization'
-
+import Alert from './Alert'
 
 function AddOrganizationForm(props) {
+
+
   const {
     register,
     reset,
@@ -13,11 +15,12 @@ function AddOrganizationForm(props) {
     mode: 'onBlur'
   });
   const onSabmit =  async (data) => {
-    console.log(data)
-    postOrganization(data)
+   await postOrganization(data)
     props.setOrganizations((await getOrganizations()).data)
     reset()
   }
+ 
+ 
 
   return (
     <div>
