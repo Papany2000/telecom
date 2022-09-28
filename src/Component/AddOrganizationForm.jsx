@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { useForm } from 'react-hook-form';
 import { getOrganizations, postOrganization } from '../api/Organization'
-import Alert from './Alert'
+import Swal from 'sweetalert2'
 
 function AddOrganizationForm(props) {
 
@@ -15,9 +15,34 @@ function AddOrganizationForm(props) {
     mode: 'onBlur'
   });
   const onSabmit =  async (data) => {
-   await postOrganization(data)
-    props.setOrganizations((await getOrganizations()).data)
-    reset()
+    try {
+      const res = await postOrganization(data)
+      Swal.fire({
+        showCloseButton: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: 200,
+        height: 200,
+        position: 'top-end',
+        title: 'info!',
+        text: 'Успешно',
+        timer: 1500
+      })
+      props.setOrganizations((await getOrganizations()).data)
+      reset()
+    } catch(e) {
+      Swal.fire({
+        showCloseButton: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: 200,
+        height: 200,
+        position: 'top-end',
+        title: 'Error!',
+        text: 'Do you want to continue',
+        timer: 1500
+      })
+    }
   }
  
  

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { getOrders, postOrder } from '../api/Order'
-
+import Swal from 'sweetalert2'
 
 function AddOrderForm(props) {
 
@@ -13,12 +13,38 @@ function AddOrderForm(props) {
   } = useForm({
     mode: 'onBlur'
   });
+
   const onSabmit =  async (data) => {
-    console.log(data)
-   await postOrder(data)
-    props.setOrders((await getOrders()).data)
-    reset()
+    try {
+      const res = await postOrder(data)
+      Swal.fire({
+        showCloseButton: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: 200,
+        height: 200,
+        position: 'top-end',
+        title: 'info!',
+        text: 'Успешно',
+        timer: 1500
+      })
+      props.setOrders((await getOrders()).data)
+      reset()
+    } catch(e) {
+      Swal.fire({
+        showCloseButton: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: 200,
+        height: 200,
+        position: 'top-end',
+        title: 'Error!',
+        text: 'Do you want to continue',
+        timer: 1500
+      })
+    }
   }
+  
 
   return (
     <div>

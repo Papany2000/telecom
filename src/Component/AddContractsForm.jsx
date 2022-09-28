@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { getContracts, postContract } from '../api/Contract';
-
+import Swal from 'sweetalert2'
 
 
 function AddContractsForm(props) {
@@ -13,11 +13,36 @@ function AddContractsForm(props) {
   } = useForm({
     mode: 'onBlur'
   });
+
   const onSabmit =  async (data) => {
-    console.log(data)
-   await postContract(data)
-    props.setContracts((await getContracts()).data)
-    reset()
+    try {
+      const res = await postContract(data)
+      Swal.fire({
+        showCloseButton: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: 200,
+        height: 200,
+        position: 'top-end',
+        title: 'info!',
+        text: 'Успешно',
+        timer: 1500
+      })
+      props.setContracts((await getContracts()).data)
+      reset()
+    } catch(e) {
+      Swal.fire({
+        showCloseButton: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: 200,
+        height: 200,
+        position: 'top-end',
+        title: 'Error!',
+        text: 'Do you want to continue',
+        timer: 1500
+      })
+    }
   }
 
   return (

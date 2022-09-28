@@ -17,4 +17,6 @@ export const getOrganization = function (id) {
 
 export const removeOrganization = async (id) => axios.delete(`${serverUrl}/organization/${id}`)
 
-export const postOrganization = async (organization) => axios.post(`${serverUrl}/organization/create`, organization)
+export const postOrganization = async (organization) => { 
+    return axios.post(`${serverUrl}/organization/create`, organization)
+}
