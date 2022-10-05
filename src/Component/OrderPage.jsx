@@ -78,7 +78,7 @@ function OrderPage() {
            await removeOrder(tableProps.row.original.id)
             setOrders((await getOrders()).data)
           }}>
-            <FcEmptyTrash />
+            <FcEmptyTrash style = {{margin:  'auto',}}/>
           </span>
         ),
       },
@@ -86,7 +86,6 @@ function OrderPage() {
     [orders]
   )
   const a = { 
-    id: 'id',
     contractId: "id договора",
     number: "№ заказа",
     description: "краткое содержание",
@@ -95,6 +94,14 @@ function OrderPage() {
     supprotPhone: "тел. поддержки",
     supprotEmialTemplate: "сообщение",
     del: "удалить"
+  }
+  const b = { 
+     "№ заказа": 'number',
+    "краткое содержание": 'description',
+    "тип файла": 'type',
+    "почта поддержки": 'supportEmail',
+    "тел. поддержки": 'supprotPhone',
+    "сообщение": 'supprotEmialTemplate',
   }
 
   return (
@@ -105,8 +112,8 @@ function OrderPage() {
         <h1 className='text-center italic font-bold my-5'>Список  заказов</h1>
         <div>
         <button className='absolute top right-2 rounded-full bg-red-700 text-white text-2xl px-4 py-2' onClick={open}>+</button>
-          <Table columns={columns2} data={orders} a={a}/>
-          {modal && <Modal  title='Create new Organization' onClose={close}>
+          <Table columns={columns2} data={orders} a={a} b = {b} />
+          {modal && <Modal  title='Создайте новый заказ' onClose={close}>
         <AddOrderForm  setOrders = {setOrders} />
       </Modal>}
         </div>

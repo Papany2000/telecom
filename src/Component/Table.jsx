@@ -26,7 +26,7 @@ function GlobalFilter({
     </span>
   )
 }
-function Table({ columns, data, a}) {
+function Table({ columns, data, a, b}) {
   const filterTypes = React.useMemo(
     () => ({
       text: (rows, id, filterValue) => {
@@ -48,6 +48,11 @@ function Table({ columns, data, a}) {
     }),
     []
   );
+
+
+
+  const hiddenPropsInitial = JSON.parse(localStorage.getItem('hidenProps')) || ["id"];
+  console.log('hiddenPropsInitial', hiddenPropsInitial)
   const {
     getTableProps,
     getTableBodyProps,
@@ -65,9 +70,11 @@ function Table({ columns, data, a}) {
     state,
     preGlobalFilteredRows,
     allColumns,
-    getToggleHideAllColumnsProps,
     setGlobalFilter,
   } = useTable({
+    initialState: {
+      hiddenColumns: hiddenPropsInitial
+    },
     columns,
     data,
     defaultColumn,
@@ -91,6 +98,17 @@ function Table({ columns, data, a}) {
       return <input type="checkbox" ref={resolvedRef} {...rest} />
     }
   )
+
+  const test = (event) => {
+    if(!event.target.checked) {
+      const props = JSON.parse(localStorage.getItem('hidenProps')) || [];
+      props.push(b[event.target.labels[0].innerText.trim()])
+      localStorage.setItem('hidenProps', JSON.stringify(props))
+    } else {
+      const props = JSON.parse(localStorage.getItem('hidenProps')) || []
+      localStorage.setItem('hidenProps', JSON.stringify(props.filter(el => el !== b[event.target.labels[0].innerText.trim()])))
+    }
+  }
  
   return (
     <>
@@ -99,14 +117,10 @@ function Table({ columns, data, a}) {
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"></div>
             <div  className='mx-6 flex'>
-              <div className='my-3.5'>
-                <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} /> Toggle
-                All
-              </div>
               {allColumns.map(column => (
                 <div key={column.id} className='mx-6 my-3.5'>
                   <label>
-                    <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
+                    <input type="checkbox" {...column.getToggleHiddenProps()} onClick={test}/>{' '}
                     {a[column.id]}
                   </label>
                 </div>
@@ -125,7 +139,7 @@ function Table({ columns, data, a}) {
                     <tr className='border-spacing-1' {...headerGroup.getHeaderGroupProps()}>
                       {
                         headerGroup.headers.map(column => (
-                          <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" {...column.getHeaderProps({ ...column.getSortByToggleProps(), style: { width: column.width, minwidth: column.minwidth, whiteSpace: column.whiteSpace } })}>
+                          <th scope="col" className=" text-center text-xs font-medium text-gray-500 uppercase tracking-wider" {...column.getHeaderProps({ ...column.getSortByToggleProps(), style: { width: column.width, minwidth: column.minwidth, whiteSpace: column.whiteSpace } })}>
                             {
                               column.render('Header')}
                             <div>

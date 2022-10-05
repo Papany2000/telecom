@@ -56,7 +56,7 @@ function AddContractsForm(props) {
           {errors?.organizationId && <p className='text-center text-red-600'>{errors?.organizationId?.message || "error"}</p>}
         </div>
         <label>
-          № заказа:
+          № до:
           <input className='border px-2 py-1 mb-2 w-full outline-0' {...register('number', { required: 'Поле обязательно к заполнению' })} />
         </label>
         <div>

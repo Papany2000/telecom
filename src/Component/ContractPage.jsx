@@ -39,6 +39,10 @@ function ContractPage() {
         accessor: 'id',
       },
       {
+        Header: 'id организации',
+        accessor: 'organizationId',
+      },
+      {
         Header: 'Номер договора',
         accessor: 'number'
       },
@@ -65,7 +69,7 @@ function ContractPage() {
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
             <Link to={`/orders/${tableProps.row.original.id}`}>
-              <GrDocumentDownload />
+              <GrDocumentDownload style = {{margin:  'auto',}}/>
             </Link>
           </span>
         ),
@@ -82,7 +86,7 @@ function ContractPage() {
            await removeContract(tableProps.row.original.id)
             setContracts((await getContracts()).data)
           }}>
-            <FcEmptyTrash />
+            <FcEmptyTrash style = {{margin:  'auto',}}/>
           </span>
         ),
       },
@@ -99,6 +103,14 @@ function ContractPage() {
     zacaz: "заказы",
     del: "del",
   }
+  const b = {
+    "id": 'id',
+     "id организации": 'organizationId',
+     "№ договора": 'number',
+    "краткое содержание": 'description',
+    "доходный расходный": 'isProfitable',
+    "путь к файлу": 'fileUuid',
+  }
 
 
   return (
@@ -109,8 +121,8 @@ function ContractPage() {
         <h1 className='text-center italic font-bold my-5'>Список договоров Телеком СП</h1>
         <div className='container'>
         <button className='absolute top right-2 rounded-full bg-red-700 text-white text-2xl px-4 py-2' onClick={open}>+</button>
-          <Table columns={columns1} data={contracts} a={a} />
-          {modal && <Modal  title='Create new Organization' onClose={close}>
+          <Table columns={columns1} data={contracts} a={a} b ={b} />
+          {modal && <Modal  title='Создайте новый договор' onClose={close}>
         <AddContractsForm setContracts = {setContracts} />
       </Modal>}
         </div>
