@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 import ContractPage from "./Component/ContractPage";
 import OrderPage from './Component/OrderPage'
 import React from 'react'
+import RegistrationForm from "./Component/RegistrationForm";
 
 
 function App() {
@@ -13,7 +14,8 @@ function App() {
       <Navigation />
       <div className="w-screen mx-auto">
         <Routes>
-          <Route path='/' element={<OrganizationPage />} />
+          <Route path='/' element={<RegistrationForm/>} />
+          <Route path='/organization' element={<OrganizationPage />} />
           <Route path='/contract/:id' element={<ContractPage />} />
           <Route path='/contract' element={<ContractPage />} />
           <Route path='/orders/:id' element={<OrderPage />} />

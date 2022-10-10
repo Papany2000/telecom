@@ -8,7 +8,8 @@ export function Navigation() {
       <span className="font-bold">Tелеком СП  2022</span>
       <Greeting/>
       <span>
-        <NavLink to="/" className="mr-2 hover:bg-sky-700">Организации</NavLink>
+      <NavLink to="/" className="mr-2 hover:bg-sky-700">Войти</NavLink>
+        <NavLink to="/organization" className="mr-2 hover:bg-sky-700">Организации</NavLink>
         <NavLink to="/contract" className="mr-2 hover:bg-sky-700">Договора</NavLink>
         <NavLink to="/orders" className="mr-2 hover:bg-sky-700">Заказы</NavLink>
       </span>

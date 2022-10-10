@@ -52,7 +52,6 @@ function Table({ columns, data, a, b}) {
 
 
   const hiddenPropsInitial = JSON.parse(localStorage.getItem('hidenProps')) || ["id"];
-  console.log('hiddenPropsInitial', hiddenPropsInitial)
   const {
     getTableProps,
     getTableBodyProps,
