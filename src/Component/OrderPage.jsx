@@ -75,6 +75,8 @@ function OrderPage() {
         Cell: (tableProps) => (
           <span style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
           onClick={async () => {
+            const res =  window.confirm('Вы уверены')
+            if(!res){return false}
            await removeOrder(tableProps.row.original.id)
             setOrders((await getOrders()).data)
           }}>
